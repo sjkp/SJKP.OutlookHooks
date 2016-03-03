@@ -86,6 +86,7 @@
       <DependentUpon>Web.config</DependentUpon>
     </None>
     <TypeScriptCompile Include="App\services\graphService.ts" />
+    <TypeScriptCompile Include="file1.ts" />
     <TypeScriptCompile Include="typings\jquery\jquery.d.ts" />
     <TypeScriptCompile Include="typings\office\office.d.ts" />
   </ItemGroup>

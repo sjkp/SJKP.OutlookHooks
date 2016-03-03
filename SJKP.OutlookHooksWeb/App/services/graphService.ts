@@ -1,12 +1,9 @@
 ﻿module SJKP.OutlookHooks {
     "use strict";
 
-    export interface IMail {
-        subject: string;
-    }
 
     export interface IGraphService {
-        getMail(n? : number): ng.IPromise<IMail[]>;
+        getMail(n?: number): ng.IPromise<Microsoft.Graph.message[]>;
         getSubscriptions(): ng.IPromise<any[]>;
         createSubscription(): ng.IPromise<any>;
     }

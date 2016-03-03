@@ -147,6 +147,7 @@ namespace SJKP.ODataToTypeScript
                     [global::Microsoft.OData.Client.OriginalNameAttribute("""+ originalContainerName + @""")]
                 ");
             }
+
             GenerationEnvironment.Append(@"
             public partial class " + fixedContainerName + @" : global::Microsoft.OData.Client.DataServiceContext
                 {
@@ -570,6 +571,10 @@ private global::Microsoft.OData.Client.DataServiceQuery<"+ entitySetElementTypeN
                 GenerationEnvironment.Append(@"
                     [global::Microsoft.OData.Client.OriginalNameAttribute("""+ originalTypeName +@""")]
                 ");
+            }
+            if (baseTypeName == BaseEntityType +", "+ this.NotifyPropertyChangedModifier)
+            {
+                GenerationEnvironment.Append(@"[TypeLite.TsClass]");
             }
             GenerationEnvironment.Append(@"
                 public" + abstractModifier + @" partial class " + typeName + @"" + baseTypeName + @"

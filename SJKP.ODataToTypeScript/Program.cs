@@ -14,9 +14,11 @@ using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml;
+using TypeLite;
 
 namespace SJKP.ODataToTypeScript
 {
+    
     class Program
     {
         static void Main(string[] args)
@@ -43,21 +45,6 @@ namespace SJKP.ODataToTypeScript
             
             var s = template.TransformText();
 
-    //        s = @"
-    //using System;
-
-    //namespace RoslynCompileSample
-    //{
-    //    public class Writer
-    //    {
-    //        public global::Microsoft.OData.Edm.Library.TimeOfDay time {get;set;}
-    //        public void Write(string message)
-    //        {
-    //            Console.WriteLine(message);
-    //        }
-    //    }
-    //}";
-
             SyntaxTree syntaxTree = CSharpSyntaxTree.ParseText(s);
             string assemblyName = Path.GetRandomFileName();
 
@@ -69,17 +56,15 @@ namespace SJKP.ODataToTypeScript
                 MetadataReference.CreateFromFile(typeof(IEdmModel).Assembly.Location),
                 MetadataReference.CreateFromFile(typeof(TimeOfDay).Assembly.Location),
                 MetadataReference.CreateFromFile(typeof(object).Assembly.Location),
+
                 MetadataReference.CreateFromFile(typeof(Enumerable).Assembly.Location),
                 MetadataReference.CreateFromFile(typeof(XmlDocument).Assembly.Location),
-               // MetadataReference.CreateFromFile(@"C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETPortable\v4.0\Profile\Profile328\mscorlib.dll")
+                MetadataReference.CreateFromFile(typeof(TsClassAttribute).Assembly.Location)
 
             };
 
-            references.AddRange(Directory.GetFiles(@"C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.5\Facades").Select(f => MetadataReference.CreateFromFile(f)));
-
             var op = new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary);
-            //op.WithAssemblyIdentityComparer(DesktopAssemblyIdentityComparer.Default);
-            //CSharpCompilationOptions.WithAssemblyIdentityComparer(DesktopAssemblyIdentityComparer.Default);
+            op = op.WithAssemblyIdentityComparer(DesktopAssemblyIdentityComparer.Default);            
             CSharpCompilation compilation = CSharpCompilation.Create(
                 assemblyName,
                 syntaxTrees: new[] { syntaxTree },
@@ -93,7 +78,7 @@ namespace SJKP.ODataToTypeScript
                 if (!result.Success)
                 {
                     IEnumerable<Diagnostic> failures = result.Diagnostics.Where(diagnostic =>
-                        //diagnostic.IsWarningAsError ||
+                        diagnostic.IsWarningAsError ||
                         diagnostic.Severity == DiagnosticSeverity.Error);
 
                     foreach (Diagnostic diagnostic in failures)
@@ -110,12 +95,14 @@ namespace SJKP.ODataToTypeScript
 
 
 
-            File.WriteAllText(@"c:\class.cs", s);
+            File.WriteAllText(options.CsharpOutput, s);
 
-            //var ts = TypeScript.Definitions().For(typeof(SJKP.Graph.message));
+            var ts = TypeScript.Definitions().For(assembly);
 
-            //var props = ts.Generate(TsGeneratorOutput.Properties);
-            //var enums = ts.Generate(TsGeneratorOutput.Enums);
+            var props = ts.Generate(TsGeneratorOutput.Properties);
+            var enums = ts.Generate(TsGeneratorOutput.Enums);
+
+            File.WriteAllText(options.Output, props + enums);
         }
     }
 }

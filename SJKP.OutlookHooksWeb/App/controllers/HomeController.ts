@@ -5,7 +5,7 @@ module SJKP.OutlookHooks {
 
     export interface IHomeScope {
         createSubscription: Function;
-        mails: IMail[];
+        mails: Microsoft.Graph.message[];
         skip: number;
         page(n: number): void;        
     }

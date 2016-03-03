@@ -13,7 +13,7 @@ namespace SJKP.ODataToTypeScript
         [Option('u', "Uri", Required = true)]
         public string MetadataDocumentUri { get; set; }
 
-        [Option('n', "Namespace", Required =true)]
+        [Option('n', "Namespace", Required = true)]
         public string NamespacePrefix { get; set; }
 
         [Option('d', "UseDataServiceCollection", DefaultValue = true)]
@@ -22,8 +22,14 @@ namespace SJKP.ODataToTypeScript
         [Option('a', "EnableNamingAlias", DefaultValue = true)]
         public bool EnableNamingAlias { get; set; }
 
-        [Option('i', "IgnoreUnexpectedElementsAndAttributes", DefaultValue =true)]
+        [Option('i', "IgnoreUnexpectedElementsAndAttributes", DefaultValue = true)]
         public bool IgnoreUnexpectedElementsAndAttributes { get; set; }
+
+        [Option('o', "Output", DefaultValue = "output.d.ts")]
+        public string Output { get; set; }
+
+        [Option('c', "CSharp Output", DefaultValue = "class.cs")]
+        public string CsharpOutput {get;set;}
 
         [HelpOption]
         public string GetUsage()
