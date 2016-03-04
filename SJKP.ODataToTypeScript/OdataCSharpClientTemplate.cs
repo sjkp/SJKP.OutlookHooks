@@ -433,12 +433,12 @@ private global::Microsoft.OData.Client.DataServiceQuery<"+ entitySetElementTypeN
                 ");
                 foreach (var reference in this.context.ReferencesMap)
                 {
-                    GenerationEnvironment.Append(@"
-                                        {@""+ reference.Key.OriginalString.Replace("""", """""") +@"", @""+ Utils.SerializeToString(reference.Value).Replace("""", """""") +@""},
-                    ");
+                    //GenerationEnvironment.Append(@" 
+                    //                    {@""" + reference.Key.OriginalString.Replace("\"", "\"\"") +", @""" + Utils.SerializeToString(reference.Value).Replace("\"", "\"\"") + @"""},                                        
+                    //");
                 }
                 GenerationEnvironment.Append(@"
-                //                };
+                                };
                 ");
             }
             GenerationEnvironment.Append(@"
@@ -572,11 +572,16 @@ private global::Microsoft.OData.Client.DataServiceQuery<"+ entitySetElementTypeN
                     [global::Microsoft.OData.Client.OriginalNameAttribute("""+ originalTypeName +@""")]
                 ");
             }
-            if (baseTypeName == BaseEntityType +", "+ this.NotifyPropertyChangedModifier)
-            {
-                GenerationEnvironment.Append(@"[TypeLite.TsClass]");
-            }
-            GenerationEnvironment.Append(@"
+            GenerationEnvironment.Append(@"[TypeLite.TsClass]");
+            //if (baseTypeName == BaseEntityType +", "+ this.NotifyPropertyChangedModifier)
+            //{
+            //    GenerationEnvironment.Append(@"[TypeLite.TsClass]");
+            //}
+            //else if (baseTypeName == BaseEntityType)
+            //{
+                
+            //}
+                GenerationEnvironment.Append(@"
                 public" + abstractModifier + @" partial class " + typeName + @"" + baseTypeName + @"
                 {
             ");
@@ -788,7 +793,7 @@ private global::Microsoft.OData.Client.DataServiceQuery<"+ entitySetElementTypeN
             GenerationEnvironment.Append(@"
                     public global::Microsoft.OData.Client.DataServiceQuery<" + returnTypeName + @"> " + functionName + @"(" + parameters + @"" + s + @")
                     {
-                        return this.CreateFunctionQuery<" + returnTypeName + @">("", """+ originalFunctionName +@""", " + isComposable.ToString().ToLower() + @"" + s2 + parameterValues + @");
+                        return this.CreateFunctionQuery<" + returnTypeName + ">(\"\", \""+ originalFunctionName +@""", " + isComposable.ToString().ToLower() + @"" + s2 + parameterValues + @");
                     }
             ");
         }
@@ -808,11 +813,11 @@ private global::Microsoft.OData.Client.DataServiceQuery<"+ entitySetElementTypeN
             }
             var s1 = isReturnEntity ? returnTypeName + this.singleSuffix : string.Format(this.DataServiceQuerySingleStructureTemplate, returnTypeName);
             var s2 = useEntityReference ? ", bool useEntityReference = false" : string.Empty;
-            var s3 = "return " + (isReturnEntity ? "new " + returnTypeName + this.singleSuffix + "(" : string.Empty) + "this.CreateFunctionQuerySingle<" + returnTypeName + @">("", " + originalFunctionName + ", " + isComposable.ToString().ToLower() + "" + (string.IsNullOrEmpty(parameterValues) ? string.Empty : ", " + parameterValues) + ")" + (isReturnEntity ? ")" : string.Empty);
+            var s3 = "return " + (isReturnEntity ? "new " + returnTypeName + this.singleSuffix + "(" : string.Empty) + "this.CreateFunctionQuerySingle<" + returnTypeName + ">(\"\", \"" + originalFunctionName + "\", " + isComposable.ToString().ToLower() + "" + (string.IsNullOrEmpty(parameterValues) ? string.Empty : ", " + parameterValues) + ")" + (isReturnEntity ? ")" : string.Empty);
             GenerationEnvironment.Append(@"
                     public " + s1 + @" " + functionName + @"(" + parameters + @"" + s2 + @")
                     {
-                        return " + s3 +@";
+                        " + s3 +@";
         }
             ");
 
@@ -833,7 +838,7 @@ private global::Microsoft.OData.Client.DataServiceQuery<"+ entitySetElementTypeN
                 ");
             }
             var s1 = hideBaseMethod ? this.OverloadsModifier : string.Empty + @"global::Microsoft.OData.Client.DataServiceQuery<" + returnTypeName + @"> " + functionName + @"(" + parameters + "" + (useEntityReference ? ", bool useEntityReference = false" : string.Empty) + ")";
-            var s2 = ">(string.Join(\"/\", global::System.Linq.Enumerable.Select(global::System.Linq.Enumerable.Skip(requestUri.Segments, this.Context.BaseUri.Segments.Length), s => s.Trim('/'))), \"" + fullNamespace + "."+ originalFunctionName + "\", " + isComposable.ToString().ToLower() + "" + (string.IsNullOrEmpty(parameterValues) ? string.Empty : ", " + parameterValues + @"" + (useEntityReference ? ", bool useEntityReference = false" : string.Empty + ");"));
+            var s2 = ">(string.Join(\"/\", global::System.Linq.Enumerable.Select(global::System.Linq.Enumerable.Skip(requestUri.Segments, this.Context.BaseUri.Segments.Length), s => s.Trim('/'))), \"" + fullNamespace + "."+ originalFunctionName + "\", " + isComposable.ToString().ToLower() + "" + (string.IsNullOrEmpty(parameterValues) ? string.Empty : ", " + parameterValues + @"" + (useEntityReference ? ", bool useEntityReference = false" : string.Empty))+");";
             GenerationEnvironment.Append(@"
                     public " + s1 + @"
                     {
@@ -859,7 +864,7 @@ private global::Microsoft.OData.Client.DataServiceQuery<"+ entitySetElementTypeN
             }
 
             var s1 = "public " +(hideBaseMethod ? this.OverloadsModifier : string.Empty) + " " + (isReturnEntity ? returnTypeName + this.singleSuffix : string.Format(this.DataServiceQuerySingleStructureTemplate, returnTypeName)) + " " + functionName + "("+ parameters +"" + (useEntityReference ? ", bool useEntityReference = false" : string.Empty) + ")";
-            var s2 = "return " + (isReturnEntity ? "new " + returnTypeName + this.singleSuffix + "(" : string.Empty) + "this.Context.CreateFunctionQuerySingle<" + returnTypeName + ">(string.Join(\"/\", global::System.Linq.Enumerable.Select(global::System.Linq.Enumerable.Skip(requestUri.Segments, this.Context.BaseUri.Segments.Length), s => s.Trim('/'))), " + fullNamespace + "." + originalFunctionName + ", " + isComposable.ToString().ToLower() + "" + (string.IsNullOrEmpty(parameterValues) ? string.Empty : ", " + parameterValues) + ")" + (isReturnEntity ? ")" : string.Empty) + ";";
+            var s2 = "return " + (isReturnEntity ? "new " + returnTypeName + this.singleSuffix + "(" : string.Empty) + "this.Context.CreateFunctionQuerySingle<" + returnTypeName + ">(string.Join(\"/\", global::System.Linq.Enumerable.Select(global::System.Linq.Enumerable.Skip(requestUri.Segments, this.Context.BaseUri.Segments.Length), s => s.Trim('/'))), \"" + fullNamespace + "." + originalFunctionName + "\", " + isComposable.ToString().ToLower() + "" + (string.IsNullOrEmpty(parameterValues) ? string.Empty : ", " + parameterValues) + ")" + (isReturnEntity ? ")" : string.Empty) + ";";
             GenerationEnvironment.Append(@"
                     " + s1 + @"
                     {
@@ -887,7 +892,7 @@ private global::Microsoft.OData.Client.DataServiceQuery<"+ entitySetElementTypeN
             GenerationEnvironment.Append(@"
                     public " + returnTypeName + @" " + actionName + @"(" + parameters + @")
                     {
-                        return new " + returnTypeName + @"(this, this.BaseUri.OriginalString.Trim('/') + " +"/"+ @""+ originalActionName +@"" + (string.IsNullOrEmpty(parameterValues) ? string.Empty : ", " + parameterValues) + @");
+                        return new " + returnTypeName + @"(this, this.BaseUri.OriginalString.Trim('/') + " +"\"/\"+"+ @"""+ originalActionName +@""" + (string.IsNullOrEmpty(parameterValues) ? string.Empty : ", " + parameterValues) + @");
                     }
             ");
         }

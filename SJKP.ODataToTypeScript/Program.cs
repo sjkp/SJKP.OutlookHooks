@@ -44,6 +44,7 @@ namespace SJKP.ODataToTypeScript
             ODataClientTemplate template = new ODataClientCSharpTemplate(context);           
             
             var s = template.TransformText();
+            File.WriteAllText(options.CsharpOutput, s);
 
             SyntaxTree syntaxTree = CSharpSyntaxTree.ParseText(s);
             string assemblyName = Path.GetRandomFileName();
@@ -95,7 +96,7 @@ namespace SJKP.ODataToTypeScript
 
 
 
-            File.WriteAllText(options.CsharpOutput, s);
+            
 
             var ts = TypeScript.Definitions().For(assembly);
 
